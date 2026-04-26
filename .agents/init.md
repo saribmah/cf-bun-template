@@ -26,12 +26,13 @@ Run:
 grep -rl '{{\|@app/' . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.agents
 ```
 
-Also check for the marker block: if `<!-- PROJECT-CONTEXT:START -->` in
-`AGENTS.md` still wraps the "Uninitialized" placeholder, the project
-description hasn't been written yet.
+Also check for the marker blocks: if `<!-- PROJECT-INTRO:START -->` exists
+in `README.md` or `<!-- PROJECT-CONTEXT:START -->` exists in `AGENTS.md`,
+the project description hasn't been written yet (post-init those markers
+are stripped entirely — see Step 5).
 
-If there are no matches AND the project blocks are populated, tell the user
-the template is already initialized and stop.
+If there are no matches AND no marker blocks remain, tell the user the
+template is already initialized and stop.
 
 ## Step 2 — Understand what they're building (the conversation)
 
@@ -113,48 +114,58 @@ Should produce no matches.
 ## Step 5 — Rewrite the project-intro blocks
 
 This is the new, important part. Three files have explicit marker blocks
-that you replace with the user's product description:
+that you replace with the user's product description.
+
+> ⚠️ **Strip the markers themselves**, not just the content between them.
+> The markers (`<!-- PROJECT-INTRO:START -->`, `<!-- PROJECT-INTRO:END -->`,
+> `<!-- TEMPLATE-ONLY:START -->`, `<!-- TEMPLATE-ONLY:END -->`,
+> `<!-- PROJECT-CONTEXT:START -->`, `<!-- PROJECT-CONTEXT:END -->`) are
+> only useful pre-init for finding the blocks. Once you've replaced/removed
+> the content, delete the marker comments too. They serve no purpose
+> post-init and just clutter the source.
+
+Also delete the comment header at the very top of `README.md` (the
+`<!-- This README has TWO modes... -->` block) — same reason.
 
 ### `README.md`
 
-Replace **everything between** `<!-- PROJECT-INTRO:START -->` and
-`<!-- PROJECT-INTRO:END -->` with the user's product content. Use this
-shape (substitute their values):
+1. Replace **the entire block from `<!-- PROJECT-INTRO:START -->` through
+   `<!-- PROJECT-INTRO:END -->` (inclusive)** with the user's product
+   content (no markers in the output):
 
-```markdown
-<!-- PROJECT-INTRO:START -->
+   ```markdown
+   # <App Name>
 
-# <App Name>
+   <One-line description from Step 2>
 
-<One-line description from Step 2>
+   ## About
 
-## About
+   <2-3 sentence About paragraph>
 
-<2-3 sentence About paragraph>
+   ## What it does
 
-## What it does
+   - <capability 1>
+   - <capability 2>
+   - <capability 3>
 
-- <capability 1>
-- <capability 2>
-- <capability 3>
+   **For**: <target audience>
+   ```
 
-**For**: <target audience>
+2. **Delete the entire block from `<!-- TEMPLATE-ONLY:START -->` through
+   `<!-- TEMPLATE-ONLY:END -->` (inclusive)**, leaving nothing in its
+   place. Those sections (template "What you get" / "Quick start") are
+   template-only.
 
-<!-- PROJECT-INTRO:END -->
-```
-
-Then **delete everything between** `<!-- TEMPLATE-ONLY:START -->` and
-`<!-- TEMPLATE-ONLY:END -->`, including the markers themselves. Those
-sections (template "What you get" / "Quick start") are template-only.
+3. **Delete the top-of-file `<!-- This README has TWO modes... -->`
+   comment block.** It only made sense pre-init.
 
 ### `AGENTS.md`
 
-Replace **everything between** `<!-- PROJECT-CONTEXT:START -->` and
-`<!-- PROJECT-CONTEXT:END -->` with:
+Replace **the entire block from `<!-- PROJECT-CONTEXT:START -->` through
+`<!-- PROJECT-CONTEXT:END -->` (inclusive)** with the following (no markers
+in the output):
 
 ```markdown
-<!-- PROJECT-CONTEXT:START -->
-
 ## About this project
 
 <2-3 sentence About paragraph>
@@ -169,8 +180,6 @@ Replace **everything between** `<!-- PROJECT-CONTEXT:START -->` and
 
 See [`.agents/PROJECT.md`](./.agents/PROJECT.md) for the full project identity
 (name, scope, current focus, notes).
-
-<!-- PROJECT-CONTEXT:END -->
 ```
 
 ### `.agents/PROJECT.md`
