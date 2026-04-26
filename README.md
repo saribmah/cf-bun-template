@@ -1,9 +1,32 @@
+<!--
+  This README has TWO modes.
+
+  • Pre-init (template state): describes the template itself.
+  • Post-init: describes YOUR project. The init recipe (see `.agents/init.md`)
+    rewrites the PROJECT-INTRO block with the user's product description and
+    deletes everything inside TEMPLATE-ONLY blocks.
+
+  Sections outside both blocks (Architecture, Local development, Deploy,
+  Common tasks, Customizing, License) are preserved as-is — they're useful
+  in both modes.
+-->
+
+<!-- PROJECT-INTRO:START -->
+
 # cf-bun-template
 
 A Bun monorepo template for Cloudflare Workers + React. Opinionated about
 **how** code is organized (namespaces, typed errors, OpenAPI from routes),
 unopinionated about **what** you build (no DB locked in, no auth provider
 locked in beyond JWT bearer).
+
+> 🟡 **This template is uninitialized.** Open the directory in your AI agent
+> and say _"Initialize this template for my project."_ The agent will
+> interview you about what you're building and rewrite this section.
+
+<!-- PROJECT-INTRO:END -->
+
+<!-- TEMPLATE-ONLY:START -->
 
 ## What you get
 
@@ -38,9 +61,9 @@ etc.) and say:
 
 > Initialize this template for my project.
 
-The agent will read [`.agents/init.md`](./.agents/init.md), interview you for
-a few details (app name, package scope, Cloudflare worker name, prod
-domain), substitute placeholders, install deps, and run all the checks.
+The agent will read [`.agents/init.md`](./.agents/init.md), ask you what
+you're building (in your own words), then capture the mechanical setup
+details, substitute placeholders, install deps, and run all the checks.
 
 ### Manually
 
@@ -71,6 +94,12 @@ bun run lint && bun run ts-check && bun run test
 rm .agents/init.md   # only useful pre-init
 ```
 
+Manual mode skips writing the product description — fill in the
+PROJECT-INTRO block above and `.agents/PROJECT.md` yourself if you want AI
+agents to have project context later.
+
+<!-- TEMPLATE-ONLY:END -->
+
 ## Architecture
 
 See [AGENTS.md](./AGENTS.md) for the full architectural rulebook (also read
@@ -90,6 +119,7 @@ packages/
 │   │   └── example/        # reference feature (delete or rename)
 │   ├── scripts/            # generate-openapi
 │   └── wrangler.jsonc      # Cloudflare config
+├── sdk/                    # TypeScript SDK (generated from API OpenAPI)
 └── web/                    # React + Vite frontend (delete if API-only)
     └── src/
 ```
@@ -132,21 +162,28 @@ bun run --filter '*/web' dev      # vite on :3002 (proxies /api → :8787)
 ```
 
 The web app's Vite config proxies `/api/*` to the local wrangler dev server,
-so `fetch('/api/health')` Just Works in dev.
+so the SDK's `baseUrl: "/api"` Just Works in dev.
 
 ## Deploy
 
-The repo ships with a `Deploy` GitHub Action (`.github/workflows/deploy.yml`)
-that runs on pushes to `main`. To enable it, add these secrets:
+The repo ships with two GitHub Actions:
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
+- **`deploy.yml`** — deploys the Cloudflare Worker. Requires
+  `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` secrets.
+- **`publish-sdk.yml`** — publishes `@<scope>/sdk` to npm. Requires `NPM_TOKEN`.
+
+Both are **manual-only by default** (`workflow_dispatch`) — they won't run
+on push until you uncomment the `push` trigger in each YAML. This avoids
+spammy red checks on a fresh clone before secrets are configured.
 
 Manual deploy from your machine:
 
 ```bash
 bun run --filter '*/api' deploy
 ```
+
+To enable automatic deploys on merge to `main`, uncomment the `push` block
+in `.github/workflows/deploy.yml` (and `publish-sdk.yml` for npm).
 
 ## Customizing
 

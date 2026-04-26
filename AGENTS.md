@@ -5,21 +5,26 @@
 
 ## SETUP — IF THIS TEMPLATE IS UNINITIALIZED
 
-If you find placeholders like `{{APP_NAME}}` or `@app` anywhere in
-this repo (excluding `.agents/`), the template has **not** been initialized
-yet. Before doing anything else:
+If you find placeholders like `{{APP_NAME}}` or `@app` anywhere in this repo
+(or the "About this project" section below still says _Uninitialized_), the
+template hasn't been set up yet. Before doing anything else:
 
 > **Ask your AI agent**: _"Initialize this template for my project."_
 
-The agent will read [`.agents/init.md`](./.agents/init.md), interview you
-(app name, package scope, Cloudflare worker name, etc.), substitute
-placeholders, install dependencies, and produce a clean starting point.
+The agent will read [`.agents/init.md`](./.agents/init.md), open with one
+question — _"what are you building?"_ — and use your answer to write a
+real project description into `README.md`, this file, and
+`.agents/PROJECT.md`. Then it'll handle the mechanical setup (package scope,
+Cloudflare worker name, etc.), substitute placeholders, install
+dependencies, and run all the checks.
 
-If you'd rather initialize manually, follow the same recipe in
-`.agents/init.md` step-by-step.
+If you'd rather initialize manually, follow the recipe in `.agents/init.md`
+step-by-step.
 
-> **Agents reading this file**: if placeholders still exist, follow
-> `.agents/init.md` immediately. Do not attempt feature work first.
+> **Agents reading this file**: if placeholders or the _Uninitialized_
+> marker still exist, follow `.agents/init.md` immediately. Do not attempt
+> feature work first — the project description is the foundation everything
+> else relies on.
 
 ---
 
@@ -29,7 +34,22 @@ If you'd rather initialize manually, follow the same recipe in
 - `CLAUDE.md` is a symlink to `AGENTS.md`.
 - Do not maintain a second divergent copy of agent policy.
 
-## What this template is
+<!-- PROJECT-CONTEXT:START -->
+
+## About this project
+
+> 🟡 **Uninitialized.** Run `.agents/init.md` to populate this section with a
+> description of what this project is, who it's for, and what it does. Until
+> then, treat this repo as the bare `cf-bun-template` skeleton — patterns are
+> in place, no product logic yet.
+
+<!-- PROJECT-CONTEXT:END -->
+
+For the canonical project identity (name, scope, capabilities, current
+focus), see [`.agents/PROJECT.md`](./.agents/PROJECT.md). Treat that file as
+the source of truth — keep it up to date as the project evolves.
+
+## Stack overview
 
 A Bun monorepo on Cloudflare Workers with:
 
