@@ -1,11 +1,15 @@
 name: Publish SDK
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "packages/sdk/**"
-      - ".github/workflows/publish-sdk.yml"
+  # Manual-only by default. Once you've configured the NPM_TOKEN secret and
+  # confirmed publishes work (and the SDK has a real version > 0.0.1),
+  # uncomment the `push` trigger below to enable automatic publishes on
+  # merge to main.
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - "packages/sdk/**"
+  #     - ".github/workflows/publish-sdk.yml"
   workflow_dispatch:
 
 concurrency:
